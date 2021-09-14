@@ -46,44 +46,80 @@ void plot_graphics(double xt[], double yt[], int size_of_vectors)
 
 	size_t length;
 	double *pngdata = ConvertToPNG(&length, canvasReference->image);
-	WriteToFile(pngdata, length, "example.png");
+	WriteToFile(pngdata, length, "pos_cont.png");
 	DeleteImage(canvasReference->image);
 }
 
 
 void main()
 {
-    double vx = 1.0; // [m/s]
+    double vx = 0.0; // [m/s]
     double vy = 0.0; // [m/s]
     double wz = 0.0; // [rad/s]
     
-    double posx = 0.0; // current x position
-    double x_coord[100]; // historical recording of x position
+    double posx = -0.5; // initial current x position
+    double target_x = 0.8; // goal x position
+    double x_coord[500]; // historical recording of x position
 
-    double posy = 0.0; // current x position
-    double y_coord[100]; // historical recording of x position
+    double posy = -0.5; // initial current x position
+    double target_y = -0.1; // goal y position
+    double y_coord[500]; // historical recording of x position
 
     double theta = 90.0; // current theta angle
-    double z_coord[100]; // historical recording of x position
+    double z_coord[500]; // historical recording of x position
 
-    const double tick_time = 0.05; // integral time interval 0.01[s] = 10ms 
+    double error_x = 0.0;
+    double error_y = 0.0;
 
-    int time_of_integration = round(1/tick_time); // time in seconds / integral time interval
+    const double tick_time = 0.04; // integral time interval 0.01[s] = 10ms 
+
+    int time_of_integration = round(10/tick_time); // time in seconds / integral time interval
 
     printf("%d \n", time_of_integration);
 
     for (int i = 0; i <= time_of_integration; i++) // each for's iteration is a k time
     {
-        if (i == round(time_of_integration/2))
-        {
-            vx = 0.0;
-            vy = 1.0;
-        } 
         
         // update historical data of position (later it is used for graphics)
         x_coord[i] = posx;
         y_coord[i] = posy;
         z_coord[i] = theta;
+
+        // control position
+        error_x = target_x - posx;
+        error_y = target_y - posy;
+
+        // printf("error x: %f \n", error_x);
+        // printf("error y: %f \n", error_y);
+        // printf("\n");
+
+        double h = 0.01;
+
+        if (error_x >= 0+h)
+        {
+            vx = +Absolute(error_x); // vy = -|e(x)|
+        }
+        else if (error_x <= 0-h)
+        {
+            vx = -Absolute(error_x); // vy = +|e(x)|
+        }
+        else if (error_x > -h && error_x < h)
+        {
+            vx = 0;
+        }
+
+        if (error_y >= 0+h && (error_x > -h && error_x < h))
+        {
+            vy = +Absolute(error_y); // vx = +|e(y)|
+        }
+        else if (error_y <= 0-h && (error_x > -h && error_x < h))
+        {
+            vy = -Absolute(error_y); // vx = -|e(x)|
+        }
+        else if (error_y > -h && error_y < h && (error_x > -h && error_x < h))
+        {
+            vy = 0;
+        }
 
         // update current position by discrete integral
         posx = posx + vx * tick_time;
@@ -91,7 +127,8 @@ void main()
         theta = theta + wz * (180/M_PI) * tick_time; // conversion from [rad/s] to [deg]
     }
 
-    printf("%f \n", x_coord[time_of_integration]);
+    printf("Final x position: %f \n", x_coord[time_of_integration]);
+    printf("Final y position: %f \n", y_coord[time_of_integration]);
     
     //printf("%d", sizeof(x_coord)/sizeof(x_coord[0]));
     plot_graphics(x_coord, y_coord, time_of_integration);

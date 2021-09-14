@@ -55,9 +55,9 @@ void main()
     const double k1 = lx + ly; // k1 = k2 = k3 = k4
 
     // inverse kinematic equations
-    double vx = 0.5;
+    double vx = 0.0;
     double vy = 0.0;
-    double wz = 0.0;
+    double wz = 15.7;
 
     printf("vx: %f [m/s] \n", vx);
     printf("vy: %f [m/s] \n", vy);
@@ -68,10 +68,10 @@ void main()
     printf("\n");
 
     // forward kinematic equations
-    double w1 = 5.0;
-    double w2 = 5.0;
-    double w3 = 5.0;
-    double w4 = 5.0;
+    double w1 = -15.7;
+    double w2 = 15.7;
+    double w3 = -15.7;
+    double w4 = 15.7;
 
     printf("w1: %f [rad/s] \n", w1);
     printf("w2: %f [rad/s] \n", w2);
