@@ -140,7 +140,7 @@ void main()
         printf("\n");
         printf("------------------------------------------ \n");
         printf("Decimal number %f = ", decimal_number);
-        printf("32b%c_", binary_number[0]);
+        printf("32'b%c_", binary_number[0]);
         for(int i = 1; i<=16; i++) 
         {
             printf("%c", binary_number[i]);

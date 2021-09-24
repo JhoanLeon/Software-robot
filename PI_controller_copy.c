@@ -10,7 +10,8 @@ double actuator(double pwm_input) // convert PWM [50-255] to RPMs [0-150]
 {
     if (pwm_input >= 255.0)
     {
-        return 150.0;
+        //return 150.0;
+        return 0.0;
     }
     else if(pwm_input <= 50.0)
     {
@@ -18,7 +19,8 @@ double actuator(double pwm_input) // convert PWM [50-255] to RPMs [0-150]
     }
     else
     {
-        return (pwm_input * 150) / 255;
+        //return (pwm_input * 150) / 255;
+        return 0.0;
     }
 }
 
@@ -55,23 +57,7 @@ void main()
     // time array for plot signals
     for (int i = 0; i < time_of_sim; i++)
     {
-        if (i >= 90)
-        {
-            k_setpoint[i] = 0.0;
-        }
-        else if (i >= 70)
-        {
-            k_setpoint[i] = 200.0; // it is out of physical capacities of actuator (max 150 RPMs)
-        }
-        else if (i >= 50)
-        {
-            k_setpoint[i] = 20.0; // 20 RPMs are between normal ranges of motors
-        }
-        else if (i >= 30)
-        {
-            k_setpoint[i] = 150.0;
-        }
-        else if (i >= 10)
+        if (i >= 10)
         {
             k_setpoint[i] = 100.0; // signal of RPM setpoint through the time
         }
@@ -88,8 +74,8 @@ void main()
     double k_value_actuator[time_of_sim];
 
     // PI constants
-    double Kp = 0.60;
-    double Ki = 0.08; // rate of change, grater -> more speed to reach setpoint
+    double Kp = 0.5977;
+    double Ki = 0.0781; // rate of change, grater -> more speed to reach setpoint
 
     // PWM value after level limiter
     double pwm_output = 0.0;
